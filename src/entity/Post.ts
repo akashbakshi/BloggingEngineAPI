@@ -1,6 +1,6 @@
-import {Entity,PrimaryGeneratedColumn,Column, BeforeInsert} from 'typeorm'
+import {Entity,PrimaryGeneratedColumn,Column} from 'typeorm'
 
-@Entity()
+@Entity("posts")
 export class Post{
 
     constructor(title:string,content:string,author:string){
@@ -17,7 +17,6 @@ export class Post{
 
     @Column()
     content:string; // the HTML markup content of the blog post
-
 
     @Column()
     author:string; // store the username of the author

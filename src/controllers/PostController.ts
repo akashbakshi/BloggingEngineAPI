@@ -1,7 +1,5 @@
 
 import {Post} from '../entity/Post';
-import * as express from 'express';
-import {Request,Response} from 'express';
 import { Repository,getConnection,getRepository } from 'typeorm';
 
 class PostController {
