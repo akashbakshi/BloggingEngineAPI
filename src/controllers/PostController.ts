@@ -1,82 +1,103 @@
 
-import {Post} from '../entity/Post';
+import {BlogPost} from '../entity/BlogPost';
+import {Request,Response} from 'express';
+import {Controller, Param, Body, Get, Post, Put, Delete, Req, Res} from "routing-controllers";
 import { Repository,getConnection,getRepository } from 'typeorm';
 
-class PostController {
+@Controller("/api/posts")
+export class PostController {
 
-    private postRepo:Repository<Post>;
+    private postRepo:Repository<BlogPost>;
     constructor(){
-        this.postRepo = getConnection().getRepository(Post);
+        this.postRepo = getConnection().getRepository(BlogPost);
     }
 
-    async GetSinglePostById(id:number){
+
+
+    @Get('/:id')
+    async GetSinglePostById( @Param("id") id:number,@Res() res:Response, @Req() req:Request){
         let post;
         try{ 
+            post = await this.postRepo.findOneOrFail({id:id});
         }catch(err){
-            console.log("Error saving post becauwwdfddse: "+err);
-            return {status:500,payload:"Could not save post"};
+            console.log("Error get Single post because: "+err);
+            return res.status(404).send("Cannot find post with id: "+id);
         }
-        return {status:200,payload:"Post Saved"};
+        return res.status(200).send(post) 
     }
 
-    async GetAllPosts(){  
+ 
 
+    @Get('/')
+    async GetAllPosts(@Req() req:Request, @Res() res:Response){  
+       
         let allPosts;
         try{
-            allPosts  = this.postRepo.find();
+            allPosts  = await this.postRepo.find();
         }catch(err){
-            return {status:500,payload:"Could not retrieve all posts because \n"+err};
+            return res.status(500).send("Could not retrieve all posts because \n"+err);
         }
 
-        return {status:200,payload:allPosts};
+        return  res.status(200).send(allPosts);
     }
 
-    async UpdatePost(id:number,updatedPost:Post){
+    @Post('/')
+    async SavePosts(@Body() postToSave:BlogPost,@Req() req:Request, @Res() res:Response){
+        if(postToSave.author == undefined && postToSave.content == undefined && postToSave.title == undefined)
+            res.status(400).send("Unable to save post because either title, content or author was missing");
+        else{
+            try{
+                await this.postRepo.save(postToSave);
+                return res.status(201).send(postToSave);
+            }catch(err){
+                return res.status(500).send("Error could not save Blog Post because: \n"+err);
+            }
+        }
+    }
+
+    @Put("/:id")
+    async UpdatePost(@Param("id") id:number,@Res() res:Response ,@Body() updatedPost:BlogPost){
         let currentPost;
 
         try{
             currentPost  = await this.postRepo.findOneOrFail({id:id});
-            this.postRepo.remove(currentPost)
+          
         }catch(err){
-            return {status:500,payload:"Could not update post because retrieval failed \n"+err};
+            return res.status(500).send("Could not update post because retrieval failed \n"+err);
         }
 
         //now that we have the post in the database we need to see what's changed and update the respective properties
-
-        if(updatedPost.title.toString().length > 0 && updatedPost.title != currentPost.title)
+        console.log(updatedPost);
+        if(updatedPost.title != undefined && updatedPost.title != currentPost.title)
             currentPost.title = updatedPost.title;
 
             
-        if(updatedPost.content.toString().length > 0 && updatedPost.content != currentPost.content)
+        if(updatedPost.content != undefined && updatedPost.content != currentPost.content)
             currentPost.content = updatedPost.content;
 
-        if(updatedPost.author.toString().length > 0 && updatedPost.author != currentPost.author)
+        if(updatedPost.author != undefined && updatedPost.author != currentPost.author)
             currentPost.author = updatedPost.author;
 
-        if(updatedPost.postedAt.toString().length > 0 && updatedPost.postedAt != currentPost.postedAt)
-            currentPost.postedAt = updatedPost.postedAt;
-
         try{
-            this.postRepo.save(currentPost);
+            await this.postRepo.save(currentPost);
+            return res.status(200).send(currentPost);
         }catch(err){
-            return {status:500,payload:"Could not save updated post because \n"+err};
+            return res.status(500).send("Could not save post because \n"+err);
         }
-
     }
 
-    async DeletePost(id:number){
+    @Delete("/:id")
+    async DeletePost(@Param("id") id:number,@Res() res:Response){
 
         let post;
         try{
             post  = await this.postRepo.findOneOrFail({id:id});
-            this.postRepo.remove(post)
+            await this.postRepo.remove(post)
         }catch(err){
-            return {status:500,payload:"Could not delete posts because \n"+err};
+            return res.status(500).send("Could not delete posts because \n"+err);
         }
 
-        return {status:200,payload:"deleted post with ID "+id};
+        return res.status(200).send("deleted post with ID "+id);
     }
 
 }
-
-export default new PostController();

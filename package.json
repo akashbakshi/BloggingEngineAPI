@@ -5,7 +5,8 @@
    "main": "app.js",
    "scripts": {
       "test": "echo \"Error: no test specified\" && exit 1",
-      "start": "tsc && node ./build/app.js"
+      "win": "tsc && NODE_ENV=DevWin node ./build/app.js",
+      "mac": "tsc && NODE_ENV=DevMac node ./build/app.js"
    },
    "_moduleAliases": {
       "@routes": "build/src/routes",
@@ -27,10 +28,14 @@
       "@types/express": "^4.17.2",
       "@types/node": "^13.1.1",
       "body-parser": "^1.19.0",
+      "class-transformer": "^0.2.3",
+      "class-validator": "^0.10.1",
+      "es6-shim": "^0.35.5",
       "express": "^4.17.1",
       "module-alias": "^2.2.2",
       "mysql": "^2.14.1",
       "reflect-metadata": "^0.1.13",
+      "routing-controllers": "^0.8.0",
       "typeorm": "0.2.22"
    }
 }

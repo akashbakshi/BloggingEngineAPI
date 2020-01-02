@@ -1,7 +1,8 @@
 import {Entity,PrimaryGeneratedColumn,Column} from 'typeorm'
+import { Allow } from 'class-validator';
 
 @Entity("posts")
-export class Post{
+export class BlogPost{
 
     constructor(title:string,content:string,author:string){
         this.author = author;
