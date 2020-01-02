@@ -1,5 +1,4 @@
 import {Entity,PrimaryGeneratedColumn,Column} from 'typeorm'
-import { Allow } from 'class-validator';
 
 @Entity("posts")
 export class BlogPost{

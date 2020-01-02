@@ -18,7 +18,7 @@ if(process.env.NODE_ENV == "DevWin"){
         username: "root",
         password: "app",
         database: "BlogEngine",
-        entities: [BlogPost],
+        entities: [__dirname+"/src/entity/*.js"],
         synchronize: false,
         logging: ["query", "error"]
     }
@@ -30,7 +30,7 @@ if(process.env.NODE_ENV == "DevWin"){
         username: "root",
         password: "Eagles227",
         database: "BlogEngine",
-        entities: [BlogPost],
+        entities: [__dirname+"/src/entity/*.js"],
         synchronize: false,
         logging: ["query", "error"]
     }
