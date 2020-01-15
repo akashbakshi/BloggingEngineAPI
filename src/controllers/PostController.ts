@@ -1,7 +1,7 @@
 
 import {BlogPost} from '../entity/BlogPost';
 import {Request,Response} from 'express';
-import {Controller, Param, Body, Get, Post, Put, Delete, Req, Res} from "routing-controllers";
+import {Controller, Param, Body, Get, Post, Put, Delete, Req, Res, Authorized} from "routing-controllers";
 import { Repository,getConnection,getRepository } from 'typeorm';
 
 @Controller("/api/posts")
@@ -13,7 +13,7 @@ export class PostController {
     }
 
 
-
+    
     @Get('/:id')
     async GetSinglePostById( @Param("id") id:number,@Res() res:Response, @Req() req:Request){
         let post;

@@ -1,20 +1,22 @@
 import { Repository, getConnection} from 'typeorm';
 import {Request,Response} from 'express';
-import { Get,Post, Body, Put,Delete,Req,Res,Controller, Param } from 'routing-controllers';
+import { Get,Post,Authorized, Body, Put,Delete,Req,Res,Controller, Param } from 'routing-controllers';
 import { User } from '@entity/User';
-
+import {SignToken} from '@tools/TokenHandler';
+import * as jwt from 'jsonwebtoken';
 
 @Controller("/api/users")
 export class UserController{
 
     private userRepo:Repository<User>;
-
     constructor(){
         this.userRepo = getConnection().getRepository(User); // get our user repository 
+        
     }
 
     //get user credentials 
     @Get("/:username")
+    @Authorized()
     async getByUsername(@Param("username") username:string,@Res() res:Response){
         try{
             let userToFind = await this.userRepo.findOneOrFail({username:username}); // attempt to find a user and if it doesn't exist fail so we can notify the requestor that it doesn't exist
@@ -54,8 +56,38 @@ export class UserController{
         try{
             userToAuth = await this.userRepo.findOneOrFail({username:req.body.username});
         }catch(err){
-            return res.status(404).send("Username/Password doesn't match"); // if there's no user with the username don't specify that for security reason, instead let them know the combination failed
+            return res.status(400).send("Username/Password doesn't match"); // if there's no user with the username don't specify that for security reason, instead let them know the combination failed
         }
-        return res.status(200).send(userToAuth.verifyPassword(req.body.password)); // return OK with either true or false depending on if the credentials match
+
+        if(userToAuth.verifyPassword(req.body.password)){
+    
+            let token = SignToken(userToAuth);
+            return res.status(200).send(token); // return OK with either true or false depending on if the credentials match
+        }else{
+            return res.status(400).send("Username/Password doesn't match");
+        }
+
+      
+    }
+    @Post('/verify')
+    async verifyToken(@Req() req:Request,@Res() res:Response){
+        const token = req.header("x-auth-token");
+        let username = req.body.username;
+        let email = req.body.email;
+
+
+        let decodedJWT:any;
+        try{
+            let secretKey = process.env.JWTSECRET;
+            decodedJWT = jwt.verify(token!,secretKey!); // verify the token with out secret
+        }catch(err){
+            console.log("verification error\n"+err);
+            return res.status(500).send(err);
+        }
+
+        if(decodedJWT.username == username && decodedJWT.email == email)
+            return res.status(200).send("Valid Token");
+        else
+            return res.status(400).send("Invalid Token");
     }
 }
