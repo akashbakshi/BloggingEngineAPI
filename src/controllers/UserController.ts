@@ -5,7 +5,7 @@ import { User } from '@entity/User';
 import {SignToken} from '@tools/TokenHandler';
 import * as jwt from 'jsonwebtoken';
 
-@Controller("/api/users")
+@Controller("/api/user")
 export class UserController{
 
     private userRepo:Repository<User>;

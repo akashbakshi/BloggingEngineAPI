@@ -8,18 +8,16 @@ import { User } from '@entity/User';
 import * as jwt from 'jsonwebtoken';
 
 
-console.log(process.env.NODE_ENV);
-
 if(process.env.JWTSECRET == undefined || process.env.JWTSECRET == null){
     console.log("No JWTSECRET environment variable provided\nExiting...");
     process.exit(1);
 }
 
 console.log(process.env.JWTSECRET);
-let DB_HOST = process.env.DBHOST;
-let DB_USER = process.env.DBUSER;
-let DB_PASS = process.env.DBPASS;
-let DB_NAME = process.env.DBNAME;
+let DB_HOST = process.env.DB_HOST;
+let DB_USER = process.env.DB_USER;
+let DB_PASS = process.env.DB_PASS;
+let DB_NAME = process.env.DB_NAME;
 
 let options:ConnectionOptions  = {
         type: "mysql",

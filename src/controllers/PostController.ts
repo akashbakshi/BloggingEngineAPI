@@ -4,7 +4,7 @@ import {Request,Response} from 'express';
 import {Controller, Param, Body, Get, Post, Put, Delete, Req, Res, Authorized} from "routing-controllers";
 import { Repository,getConnection,getRepository } from 'typeorm';
 
-@Controller("/api/posts")
+@Controller("/api/post")
 export class PostController {
 
     private postRepo:Repository<BlogPost>;

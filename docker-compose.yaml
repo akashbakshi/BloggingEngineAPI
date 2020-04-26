@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  web:
+    image: blogengine:latest
+    container_name: blogengine
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    environment:
+      JWTSECRET: JWTSECRET=FC93CB07E1AD92898527100E58A1CF1D1E7F65E9A266A6F87F3C84FEB541C7B3
+      DB_HOST: http://blogdb/
+      DB_USER: blog-admin
+      DB_PASS: app
+      DB_NAME: blogDB
+    depends_on:
+      - blogdb
+    links:
+      - blogdb
+  blogdb:
+    image: library/mysql:5.7
+    ports:
+      - 3306:3306
+    expose:
+      - 3306
+    restart: always
+    environment:
+      MYSQL_USER: blog-admin
+      MYSQL_PASSWORD: app
+      MYSQL_DATABASE: blogDB
+      MYSQL_ROOT_PASSWORD: rootpasswd
+
+
