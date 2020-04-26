@@ -4,15 +4,14 @@
    "description": "",
    "main": "app.js",
    "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1",
-      "win": "tsc && NODE_ENV=DevWin JWTSECRET=$uper$ecret node ./build/app.js",
-      "mac": "tsc && NODE_ENV=DevMac JWTSECRET=$uper$ecret node ./build/app.js"
+      "start": "ts-node app.ts",
+      "prod": "tsc && node /build/app.js"
    },
    "_moduleAliases": {
       "@routes": "build/src/routes",
       "@controllers": "build/src/controllers",
       "@entity": "build/src/entity",
-      "@tools":"build/src/tools"
+      "@tools": "build/src/tools"
    },
    "author": "Akash Bakshi",
    "license": "ISC",
@@ -31,7 +30,7 @@
       "@types/jsonwebtoken": "^8.3.6",
       "@types/jsrsasign": "^8.0.2",
       "@types/node": "^13.1.1",
-      "bcrypt": "^3.0.7",
+      "bcrypt": "^3.0.6",
       "body-parser": "^1.19.0",
       "class-transformer": "^0.2.3",
       "class-validator": "^0.10.1",

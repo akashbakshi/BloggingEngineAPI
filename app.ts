@@ -7,10 +7,7 @@ import {createConnection, getConnection, ConnectionOptions} from 'typeorm';
 import { User } from '@entity/User';
 import * as jwt from 'jsonwebtoken';
 
-if(process.env.NODE_ENV == undefined || process.env.NODE_ENV == null){
-    console.log("No NODE_ENV environment variable provided\nExiting...");
-    process.exit(1);
-}
+
 console.log(process.env.NODE_ENV);
 
 if(process.env.JWTSECRET == undefined || process.env.JWTSECRET == null){
@@ -19,36 +16,23 @@ if(process.env.JWTSECRET == undefined || process.env.JWTSECRET == null){
 }
 
 console.log(process.env.JWTSECRET);
+let DB_HOST = process.env.DBHOST;
+let DB_USER = process.env.DBUSER;
+let DB_PASS = process.env.DBPASS;
+let DB_NAME = process.env.DBNAME;
 
-let options:ConnectionOptions;
-
-if(process.env.NODE_ENV == "DevWin"){
-    options = {
+let options:ConnectionOptions  = {
         type: "mysql",
-        host: "localhost",
+        host: DB_HOST,
         port: 3306,
-        username: "root",
-        password: "app",
-        database: "BlogEngine",
+        username: DB_USER,
+        password: DB_PASS,
+        database: DB_NAME,
         entities: [__dirname+"/src/entity/*.js"],
         synchronize: false,
         logging: ["query", "error"]
-    }
-}else if(process.env.NODE_ENV == "DevMac"){
-    options={
-        type: "mysql",
-        host: "localhost",
-        port: 3306,
-        username: "root",
-        password: "Eagles227",
-        database: "BlogEngine",
-        entities: [__dirname+"/src/entity/*.js"],
-        synchronize: false,
-        logging: ["query", "error"]
-    }
-}else{
-
 }
+
 if(options!){
     createConnection( options! ).then(async connection=>{
         console.log("Connected to Blog Engine Database");
